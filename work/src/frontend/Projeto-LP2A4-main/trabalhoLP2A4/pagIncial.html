@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Página Inicial</title>
+        <style>
+            body{
+                position: absolute;
+                width: 95%;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            h1{
+                position: relative;
+                background-color: #f4f4f4;
+                padding: 10px;
+                width: 13cm;
+                margin-left: 0.5cm;
+                margin-top: 2cm;
+                display: inline-block;
+                float: right;
+                color: #878787;
+            }
+            .logo_img{
+                display: inline-block;
+                width: 3cm;
+                height: 4cm;
+                margin-left: 2cm;
+                margin-top: 1cm;
+            }
+            .filter_box{
+                position: absolute;
+                margin-left: 0.7cm;
+                background-color: #f4f4f4;
+                padding: 0.5cm;
+                width: 6.6cm;
+                font-size: 16px;
+            }
+            ul {
+                list-style: none;
+                padding: 0;
+            }
+            ul li {
+                margin-bottom: 10px;
+                color: #787878;
+            }
+
+            .filter_item {
+                cursor: pointer;
+                padding-left: 30px;
+                position: relative;
+            }
+
+            .filter_item:before {
+                content: "";
+                position: absolute;
+                left: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 10px;
+                height: 10px;
+                border: 1px solid #000;
+                border-radius: 2px;
+                background-color: #fff;
+            }
+
+            .filter_item.active:before {
+                background-color: #000;
+            }
+
+
+            .content_box{
+                position: relative;
+                margin-bottom: 0.5cm;
+                margin-left: 8.8cm;
+                background-color: #f4f4f4;
+                padding: 1cm;
+                display: inline-block;
+                width: 26cm;
+                height: 8.35cm;
+            }
+            .perfil_box img{
+                width: 3cm;
+                height: 3cm;
+                border-radius: 10px;
+            }
+            .perfil_box{
+                position: relative;
+                padding: 0.5cm;
+                border-radius: 10px;
+                display: inline-block;
+                background-color: #ededed;
+                text-align: center;
+                margin: 0.2cm;
+                width: 5.1cm;
+                height: 7cm;
+                font-size: 12px;
+                color: #6f6f6f;
+            }
+            .perfil_box p{
+                font-size: 13px;
+            }
+            .navigation {
+                display: flex;
+                justify-content: center;
+                margin-top: 1cm;
+                margin-bottom: 1cm;
+            }
+            .navigation button {
+                cursor: pointer;
+                font-size: 12px;
+                padding: 8px 16px;
+            }
+            .navigation button.active {
+                background-color: #d8d8d8;
+                color: #f2f2f2;
+            }
+            .end_box {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                background-color: #f4f4f4;
+                margin-left: 1cm;
+                padding-top: 1cm;
+                padding-bottom: 1cm;
+            }
+
+            .end_box img {
+                max-width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .end_box p {
+                margin-bottom: 10px;
+                font-size: 14px;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div>
+            <img src="img/logo.png" class="logo_img"></img>
+            <div style="display: inline-block;float: right;">
+                <h1 style="display: inline-block;">Code Challenge Juntos Somos+</h1>
+                <h1 style="display: inline-block;">Trabalho de LP2A2</h1>
+            </div>
+        </div>
+        <p style="float: right;margin-right: 0.5cm; color: #878787;">Home > Usuários > Detalhe</p>
+        <div class="filter_box" style="margin-top: 1.32cm;">
+            <h4 style="color:#676767;">Filtrar por usuário:</h4>
+            <ul>
+                <li class="filter_item">Especial</li>
+                <li class="filter_item">Normal</li>
+                <li class="filter_item">Trabalhoso</li>
+            </ul>
+        </div>
+
+        <div class="filter_box" style="margin-top: 6.8cm;">
+            <h4 style="color:#676767;">Filtrar por região:</h4>
+            <ul>
+                <li class="filter_item">Norte</li>
+                <li class="filter_item">Nordeste</li>
+                <li class="filter_item">Centro-Oeste</li>
+                <li class="filter_item">Sudeste</li>
+                <li class="filter_item">Sul</li>
+            </ul>
+        </div>
+
+        <div id="container_box" style="margin-top: 0.5cm;"></div>
+
+        <div class="end_box">
+            <img src="img/logo2.jpg" class="logo2_img"></img>
+            <h4 style="color:#737373;">Print Manager - Todos os direitos reservados</h4>
+            <p style="color: #767676;">Siga-nos em nossas redes sociais:</p>
+            <img src="img/redes.jpg" class="redes"></img>
+        </div>
+        <script>
+
+            var json = ''
+            fetch('http://localhost:8080/users/allUsers')
+                .then(response => response.json())
+                .then(data => {
+                   // console.log(data);
+            var parseJson = data;
+                  //  console.log(parseJson);
+            var filterUsers = document.querySelectorAll(".filter_box")[0].querySelectorAll(".filter_item");
+            var filterRegions = document.querySelectorAll(".filter_box")[1].querySelectorAll(".filter_item");
+
+            filterUsers.forEach(function (item) {
+                item.addEventListener("click", function () {
+                    filterUsers.forEach(function (item) {
+                        item.classList.remove("active");
+                    });
+
+                    this.classList.add("active");
+
+                    var filterValue = this.innerHTML;
+
+                    var filteredResults = [];
+
+                    if (filterValue === "Especial") {
+                        filteredResults = parseJson.filter(function (result) {
+                            var lon = parseFloat(result.location.coordinates.longitude);
+                            var lat = parseFloat(result.location.coordinates.latitude);
+
+                            // Defina os intervalos para usuários especiais
+                            var interval1 = {
+                                minLon: -2.196998,
+                                minLat: -46.361899,
+                                maxLon: -15.411580,
+                                maxLat: -34.276938
+                            };
+
+                            var interval2 = {
+                                minLon: -19.766959,
+                                minLat: -52.997614,
+                                maxLon: -23.966413,
+                                maxLat: -44.428305
+                            };
+
+                            // Verifique se as coordenadas estão dentro dos intervalos
+                            var withinInterval1 = lon >= interval1.minLon && lon <= interval1.maxLon && lat >= interval1.minLat && lat <= interval1.maxLat;
+                            var withinInterval2 = lon >= interval2.minLon && lon <= interval2.maxLon && lat >= interval2.minLat && lat <= interval2.maxLat;
+
+                            return withinInterval1 || withinInterval2;
+                        });
+                    } else if (filterValue === "Normal") {
+                        filteredResults = parseJson.filter(function (result) {
+                            var lon = parseFloat(result.location.coordinates.longitude);
+                            var lat = parseFloat(result.location.coordinates.latitude);
+
+                            // Defina os intervalos para usuários normais
+                            var interval = {
+                                minLon: -26.155681,
+                                minLat: -54.777426,
+                                maxLon: -34.016466,
+                                maxLat: -46.603598
+                            };
+
+                            // Verifique se as coordenadas estão dentro do intervalo
+                            return lon >= interval.minLon && lon <= interval.maxLon && lat >= interval.minLat && lat <= interval.maxLat;
+                        });
+                    } else if (filterValue === "Trabalhoso") {
+                        filteredResults = parseJson.filter(function (result) {
+                            var lon = parseFloat(result.location.coordinates.longitude);
+                            var lat = parseFloat(result.location.coordinates.latitude);
+
+                            // Verifique se as coordenadas estão fora dos intervalos dos usuários especiais e normais
+                            var interval1 = {
+                                minLon: -2.196998,
+                                minLat: -46.361899,
+                                maxLon: -15.411580,
+                                maxLat: -34.276938
+                            };
+
+                            var interval2 = {
+                                minLon: -19.766959,
+                                minLat: -52.997614,
+                                maxLon: -23.966413,
+                                maxLat: -44.428305
+                            };
+
+                            var interval3 = {
+                                minLon: -26.155681,
+                                minLat: -54.777426,
+                                maxLon: -34.016466,
+                                maxLat: -46.603598
+                            };
+
+                            var withinInterval1 = lon >= interval1.minLon && lon <= interval1.maxLon && lat >= interval1.minLat && lat <= interval1.maxLat;
+                            var withinInterval2 = lon >= interval2.minLon && lon <= interval2.maxLon && lat >= interval2.minLat && lat <= interval2.maxLat;
+                            var withinInterval3 = lon >= interval3.minLon && lon <= interval3.maxLon && lat >= interval3.minLat && lat <= interval3.maxLat;
+
+                            return !withinInterval1 && !withinInterval2 && !withinInterval3;
+                        });
+                    }
+
+                    showFilteredResults(filteredResults);
+                });
+            });
+
+
+            filterRegions.forEach(function (item) {
+                item.addEventListener("click", function () {
+                    filterRegions.forEach(function (item) {
+                        item.classList.remove("active");
+                    });
+
+                    this.classList.add("active");
+
+                    var filterValue = this.innerHTML;
+
+                    var filteredResults = [];
+
+                    if (filterValue === "Norte") {
+                        filteredResults = parseJson.filter(function (result) {
+                            var state = result.location.state.toLowerCase();
+                            return (
+                                state === "acre" ||
+                                state === "amapa" ||
+                                state === "amazonas" ||
+                                state === "para" ||
+                                state === "rondonia" ||
+                                state === "roraima" ||
+                                state === "tocantins"
+                            );
+                        });
+                    } else if (filterValue === "Nordeste") {
+                        filteredResults = parseJson.filter(function (result) {
+                            var state = result.location.state.toLowerCase();
+                            return (
+                                state === "maranhao" ||
+                                state === "piaui" ||
+                                state === "ceara" ||
+                                state === "rio grande do norte" ||
+                                state === "paraiba" ||
+                                state === "pernambuco" ||
+                                state === "alagoas" ||
+                                state === "sergipe" ||
+                                state === "aracaju" ||
+                                state === "bahia"
+                            );
+                        });
+                    } else if (filterValue === "Centro-Oeste") {
+                        filteredResults = parseJson.filter(function (result) {
+                            var state = result.location.state.toLowerCase();
+                            return (
+                                state === "distrito federal" ||
+                                state === "goias" ||
+                                state === "mato grosso" ||
+                                state === "mato grosso do sul"
+                            );
+                        });
+                    } else if (filterValue === "Sudeste") {
+                        filteredResults = parseJson.filter(function (result) {
+                            var state = result.location.state.toLowerCase();
+                            return (
+                                state === "sao paulo" ||
+                                state === "rio de janeiro" ||
+                                state === "minas gerais" ||
+                                state === "espirito santo"
+                            );
+                        });
+                    } else if (filterValue === "Sul") {
+                        filteredResults = parseJson.filter(function (result) {
+                            var state = result.location.state.toLowerCase();
+                            return (
+                                state === "parana" ||
+                                state === "santa catarina" ||
+                                state === "rio grande do sul"
+                            );
+                        });
+                    }
+
+                    showFilteredResults(filteredResults);
+                });
+            });
+
+            function showFilteredResults(results) {
+            var container_box = document.getElementById("container_box");
+            container_box.innerHTML = "";
+
+            var content_box = document.createElement("div");
+            content_box.classList.add("content_box");
+            var count = 0;
+
+            results.forEach(function (it) {
+                var imagem = it.picture.large;
+                var nome = it.name.first + " " + it.name.last;
+                var endereco = it.location.street;
+                var cidade = it.location.city;
+                var estadoCEP = it.location.state + " - CEP: " + it.location.postcode;
+
+                var perfil_box = document.createElement("div");
+                perfil_box.classList.add("perfil_box");
+
+                var img = document.createElement("img");
+                img.src = imagem;
+
+                var h2 = document.createElement("h2");
+                h2.innerHTML = nome;
+
+                var p = document.createElement("p");
+                p.innerHTML = endereco + "<br>" + cidade + "<br>" + estadoCEP;
+
+                perfil_box.appendChild(img);
+                perfil_box.appendChild(h2);
+                perfil_box.appendChild(p);
+
+                content_box.appendChild(perfil_box);
+
+                count++;
+
+                if (count === 4) {
+                    container_box.appendChild(content_box);
+                    content_box = document.createElement("div");
+                    content_box.classList.add("content_box");
+                    count = 0;
+                }
+            });
+
+            if (count > 0) {
+                container_box.appendChild(content_box);
+            }
+        }
+
+
+            var totalPages = Math.ceil(parseJson.length / 12);
+            var currentPage = 1;
+
+            function showPage(page) {
+                var startIndex = (page - 1) * 12;
+                var endIndex = page * 12;
+
+                var container_box = document.getElementById("container_box");
+                container_box.innerHTML = "";
+
+                var content_box = document.createElement("div");
+                content_box.classList.add("content_box");
+                var count = 0;
+
+                for (var i = startIndex; i < endIndex && i < parseJson.length; i++) {
+                    var it = parseJson[i];
+                    var imagem = it.picture.large;
+                    var nome = it.name.first + " " + it.name.last;
+                    var endereco = it.location.street;
+                    var cidade = it.location.city;
+                    var estadoCEP = it.location.state + " - CEP: " + it.location.postcode;
+
+                    var perfil_box = document.createElement("div");
+                    perfil_box.classList.add("perfil_box");
+
+                    var img = document.createElement("img");
+                    img.src = imagem;
+
+                    var h2 = document.createElement("h2");
+                    h2.innerHTML = nome;
+
+                    var p = document.createElement("p");
+                    p.innerHTML = endereco + "<br>" + cidade + "<br>" + estadoCEP;
+
+                    perfil_box.appendChild(img);
+                    perfil_box.appendChild(h2);
+                    perfil_box.appendChild(p);
+
+                    content_box.appendChild(perfil_box);
+
+                    count++;
+
+                    if (count === 4) {
+                        container_box.appendChild(content_box);
+                        content_box = document.createElement("div");
+                        content_box.classList.add("content_box");
+                        count = 0;
+                    }
+
+                    if (count > 0) {
+                        container_box.appendChild(content_box);
+                    }
+                }
+            };
+
+            function createNavigationButtons() {
+            var navigation = document.createElement("div");
+            navigation.classList.add("navigation");
+
+            var previousButton = document.createElement("button");
+            previousButton.innerHTML = "<<";
+
+            previousButton.addEventListener("click", function () {
+                if (currentPage > 1) {
+                currentPage--;
+                showPage(currentPage);
+                updateButtons();
+                }
+            });
+
+            navigation.appendChild(previousButton);
+
+            for (var i = 1; i <= totalPages; i++) {
+                var pageButton = document.createElement("button");
+                pageButton.innerHTML = i;
+
+                if (i === currentPage) {
+                pageButton.classList.add("active");
+                }
+
+                pageButton.addEventListener("click", (function (page) {
+                return function () {
+                    currentPage = page;
+                    showPage(currentPage);
+                    updateButtons();
+                };
+                })(i));
+
+                navigation.appendChild(pageButton);
+            }
+
+            var nextButton = document.createElement("button");
+            nextButton.innerHTML = ">>";
+
+            nextButton.addEventListener("click", function () {
+                if (currentPage < totalPages) {
+                currentPage++;
+                showPage(currentPage);
+                updateButtons();
+                }
+            });
+
+            navigation.appendChild(nextButton);
+
+            var container_box = document.getElementById("container_box");
+            container_box.parentNode.appendChild(navigation);
+            }
+
+            function updateButtons() {
+            var buttons = document.getElementsByClassName("navigation")[0].getElementsByTagName("button");
+            for (var i = 0; i < buttons.length; i++) {
+                var button = buttons[i];
+
+                button.classList.remove("active");
+
+                if (parseInt(button.innerHTML) === currentPage) {
+                button.classList.add("active");
+                }
+            }
+            }
+
+            showPage(currentPage);
+
+            createNavigationButtons();
+                }).catch(error => {
+                console.error('Erro:', error);
+            });
+        </script>
+    </body>
+</html>

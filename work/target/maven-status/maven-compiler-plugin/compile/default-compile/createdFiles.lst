@@ -1,0 +1,14 @@
+com\ifsp\lp\work\service\UserService$2.class
+com\ifsp\lp\work\dto\UserDTO.class
+com\ifsp\lp\work\dto\UserDTO$DobDTO.class
+com\ifsp\lp\work\service\UserService.class
+com\ifsp\lp\work\repository\UserRepository.class
+com\ifsp\lp\work\dto\UserDTO$CoordinatesDTO.class
+com\ifsp\lp\work\dto\UserDTO$NameDTO.class
+com\ifsp\lp\work\dto\UserDTO$LocationDTO.class
+com\ifsp\lp\work\dto\UserDTO$RegisteredDTO.class
+com\ifsp\lp\work\dto\UserDTO$PictureDTO.class
+com\ifsp\lp\work\WorkApplication.class
+com\ifsp\lp\work\dto\UserDTO$TimezoneDTO.class
+com\ifsp\lp\work\controller\userController.class
+com\ifsp\lp\work\service\UserService$1.class
